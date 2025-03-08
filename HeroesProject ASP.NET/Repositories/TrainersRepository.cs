@@ -6,16 +6,6 @@ namespace HeroesProject_ASP.NET.Repositories
 {
     public class TrainersRepository : ITrainersRepository
     {
-        // Should contain the next methods:
-        // GetAllTrainers
-        //GetTrainerById
-        // GetTrainerAllHeroes
-        // GetTrainerSpecificHero - optional
-        // AddHero (from trainer only)
-        // DeleteHero (from trainer only)
-        // Update SpecificHeroCurrentPower (affect in heroes table also)
-        // Update StartTrainingDateCurrentPower (affect in heroes table also)
-
         private readonly HeroesContext _context;
 
         public TrainersRepository(HeroesContext context)

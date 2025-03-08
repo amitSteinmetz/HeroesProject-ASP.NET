@@ -1,7 +1,4 @@
-﻿using HeroesProject_ASP.NET.Models;
-using HeroesProject_ASP.NET.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using HeroesProject_ASP.NET.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HeroesProject_ASP.NET.Controllers

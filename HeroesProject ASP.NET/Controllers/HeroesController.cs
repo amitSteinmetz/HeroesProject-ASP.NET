@@ -10,15 +10,6 @@ namespace HeroesProject_ASP.NET.Controllers
     [ApiController]
     public class HeroesController : ControllerBase
     {
-        // Should it contain all avialbe heroes or all heroes? if we delete - we need to nkow if it's only from avaible and not conntected to trainers,
-        // or from all heroes and in this case we shoukd delete the hero on traintr list too.
-        // Add hero to all heroes
-        // delete hero
-        // update hero details
-        // get all heroes
-        // get all available heroes
-        // get hero by id ? 
-
         private readonly IHeroesRepository _heroesRepository;
 
         public HeroesController(IHeroesRepository heroesRepository)
