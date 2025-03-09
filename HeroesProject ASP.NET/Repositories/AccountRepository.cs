@@ -110,7 +110,15 @@ namespace HeroesProject_ASP.NET.Repositories
                 var trainer = await _context.Trainers.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.User.Id == id.ToString());
                 if (trainer != null)
                 {
-                    if (trainer.Heroes != null) trainer.Heroes.Clear();
+                    if (trainer.Heroes != null)
+                    {
+                        foreach (var hero in trainer.Heroes)
+                        {
+                            hero.StartTrainingDate = null;
+                        }
+    
+                        trainer.Heroes.Clear();
+                    }
                     _context.Trainers.Remove(trainer);
                 }
                 

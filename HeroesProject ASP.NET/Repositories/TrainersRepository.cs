@@ -47,7 +47,9 @@ namespace HeroesProject_ASP.NET.Repositories
             if (trainer != null && hero != null)
                 if (trainer.Heroes != null && trainer.Heroes.Contains(hero))
                 {
+                    hero.StartTrainingDate = null;
                     trainer.Heroes.Remove(hero);
+
                     return await _context.SaveChangesAsync();
                 }
 
