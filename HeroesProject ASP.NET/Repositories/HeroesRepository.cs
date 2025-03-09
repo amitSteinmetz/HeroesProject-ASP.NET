@@ -28,7 +28,13 @@ namespace HeroesProject_ASP.NET.Repositories
             return hero;
         }
 
-        public async Task<int> AddHero(NewHeroModel newHero)
+        public async Task<List<HeroModel>> GetAllAvailableHeroes()
+        {
+            var availableHeroes = await _context.Heroes.Include(h => h.Trainer).Where(h => h.Trainer == null).ToListAsync();
+            return availableHeroes;
+        }
+
+        public async Task<int> CreateHero(NewHeroModel newHero)
         {
             HeroModel hero = new()
             {

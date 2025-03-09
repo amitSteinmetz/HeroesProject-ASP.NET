@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace HeroesProject_ASP.NET.Models
 {
-    public class TrainerModel
+    public class TrainerModel : IdentityUser
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public IList<HeroModel>? Heroes { get; set; }
-        public AppUser User { get; set; }
+        public List<HeroModel>? Heroes { get; set; }
     }
 }

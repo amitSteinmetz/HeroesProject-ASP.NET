@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HeroesProject_ASP.NET.Migrations
 {
     /// <inheritdoc />
-    public partial class initproject : Migration
+    public partial class restartdatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,7 @@ namespace HeroesProject_ASP.NET.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -50,19 +49,6 @@ namespace HeroesProject_ASP.NET.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Trainers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Trainers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,22 +164,23 @@ namespace HeroesProject_ASP.NET.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Ability = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartTrainingDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ability = table.Column<int>(type: "int", nullable: false),
+                    StartTrainingDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SuitColors = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartingPower = table.Column<double>(type: "float", nullable: true),
+                    StartingPower = table.Column<double>(type: "float", nullable: false),
                     CurrentPower = table.Column<double>(type: "float", nullable: true),
-                    TrainerId = table.Column<int>(type: "int", nullable: false)
+                    TrainerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    LastTrainingDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DailyTrainingCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Heroes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Heroes_Trainers_TrainerId",
+                        name: "FK_Heroes_AspNetUsers_TrainerId",
                         column: x => x.TrainerId,
-                        principalTable: "Trainers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -267,9 +254,6 @@ namespace HeroesProject_ASP.NET.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Trainers");
         }
     }
 }

@@ -1,4 +1,3 @@
-
 using HeroesProject_ASP.NET.Data;
 using HeroesProject_ASP.NET.Models;
 using HeroesProject_ASP.NET.Repositories;
@@ -7,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+    
 namespace HeroesProject_ASP.NET
 {
     public class Program
@@ -22,10 +21,10 @@ namespace HeroesProject_ASP.NET
             // Database connection
             builder.Services.AddDbContext<HeroesContext>(
                 options => options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("WorkshopRealApiPublic")));
+                    builder.Configuration.GetConnectionString("HeroesDB")));
 
             // Identity connection - for authentication
-            builder.Services.AddIdentity<AppUser, IdentityRole>()
+            builder.Services.AddIdentity<TrainerModel, IdentityRole>()
                 .AddEntityFrameworkStores<HeroesContext>()
                 .AddDefaultTokenProviders();
 
@@ -38,7 +37,7 @@ namespace HeroesProject_ASP.NET
             }).AddJwtBearer(opt =>
             {
                 opt.SaveToken = true;
-                opt.RequireHttpsMetadata = false;
+                opt.RequireHttpsMetadata = false; // enanble accessing JWT metadata even from http (not secured)
                 opt.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
@@ -49,6 +48,15 @@ namespace HeroesProject_ASP.NET
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
+
+            // Possible way to add password validations
+            //builder.Services.Configure<IdentityOptions>(opt =>
+            //{
+            //    opt.Password.RequireUppercase = true;
+            //    opt.Password.RequireDigit = true;
+            //    opt.Password.RequireNonAlphanumeric = true;
+            //    opt.Password.RequiredLength = 8;
+            //});
 
             // JSON Serialization Settings - prevent infinite loops
             builder.Services.AddControllers().AddNewtonsoftJson(opt =>

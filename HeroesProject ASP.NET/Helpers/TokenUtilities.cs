@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using HeroesProject_ASP.NET.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,11 +8,14 @@ namespace HeroesProject_ASP.NET.Helpers
 {
     public class TokenUtilities
     {
-        public static string CreateToken(IConfiguration configuration, string email)
+        public static string CreateToken(IConfiguration configuration, TrainerModel user)
         {
+            if (user == null) throw new NullReferenceException("user is null");
+
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

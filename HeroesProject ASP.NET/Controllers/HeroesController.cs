@@ -38,10 +38,20 @@ namespace HeroesProject_ASP.NET.Controllers
             return Ok(hero);
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> AddHero([FromBody] NewHeroModel hero)
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAllAvailableHeroes()
         {
-            var heroId = await _heroesRepository.AddHero(hero);
+            var availableHeroes = await _heroesRepository.GetAllAvailableHeroes();
+
+            if (availableHeroes.Count == 0) return NotFound();
+
+            return Ok(availableHeroes);
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> CreateHero([FromBody] NewHeroModel hero)
+        {
+            var heroId = await _heroesRepository.CreateHero(hero);
             return CreatedAtAction(nameof(GetHeroById), new { id = heroId }, hero);
         }
 

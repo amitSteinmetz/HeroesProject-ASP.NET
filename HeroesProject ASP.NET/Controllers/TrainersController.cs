@@ -17,64 +17,56 @@ namespace HeroesProject_ASP.NET.Controllers
             _trainersRepository = trainersRepository;
         }
 
-        [HttpPut("{trainerId}")]
-        public async Task<IActionResult> addHero(int trainerId , [FromBody] int heroId)
+        [HttpPut("add-hero/{heroId}")]
+        public async Task<IActionResult> addHeroToTrainer(int heroId)
         {
-            var result = await _trainersRepository.AddHero(trainerId, heroId);
+            var userName = User?.Identity?.Name;
+            if (userName == null) return BadRequest();
+
+            var result = await _trainersRepository.AddHeroToTrainer(userName, heroId);
 
             if (result == -1) return BadRequest();
 
             return Ok();
         }
 
-        [HttpGet("{trainerId}/heroes")]
-        public async Task<IActionResult> GetTrainerHeroes(int trainerId)
+        [HttpGet("my-heroes")]
+        public async Task<IActionResult> GetTrainerHeroes()
         {
-            var trainerHeroes = await _trainersRepository.GetTrainerHeroes(trainerId);
+            var userName = User?.Identity?.Name;
+            if (userName == null) return BadRequest();
+
+            var trainerHeroes = await _trainersRepository.GetTrainerHeroes(userName);
 
             if (trainerHeroes == null) return NotFound();
 
             return Ok(trainerHeroes);
         }
 
-        [HttpDelete("{trainerId}")]
-        public async Task<IActionResult> DeleteHero(int trainerId, [FromBody] int heroId)
+        [HttpDelete("{heroId}")]
+        public async Task<IActionResult> DeleteHeroFromTrainer(int heroId)
         {
-            var result = await _trainersRepository.DeleteHero(trainerId, heroId);
+            var userName = User?.Identity?.Name;
+            if (userName == null) return BadRequest();
+
+            var result = await _trainersRepository.DeleteHeroFromTrainer(userName, heroId);
 
             if (result == -1) return BadRequest();
 
             return Ok();
         }
 
-        [HttpPatch("{trainerId}/{heroId}")]
-        public async Task<IActionResult> UpdateHeroCurrentPower(int trainerId, int heroId, [FromBody] double updatedCurrentPower)
+        [HttpPatch("train/{heroId}")]
+        public async Task<IActionResult> TrainHero(int heroId)
         {
-            var hero = await _trainersRepository.UpdateHeroCurrentPower(trainerId, heroId, updatedCurrentPower);
+            var userName = User?.Identity?.Name;
+            if (userName == null) return BadRequest();
 
-            if (hero == null) return BadRequest();
+            var heroCurrentPower = await _trainersRepository.TrainHero(userName, heroId);
 
-            return Ok(hero);
-        }
+            if (heroCurrentPower == null) return BadRequest();
 
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllTrainers()
-        {
-            var trainers = await _trainersRepository.GetAllTrainers();
-
-            if (trainers.Count == 0) return NotFound();
-
-            return Ok(trainers);
-        }
-
-        [HttpGet("{trainerId}")]
-        public async Task<IActionResult> GetTrainer(int trainerId)
-        {
-            var trainer = await _trainersRepository.GetTrainer(trainerId);
-
-            if (trainer == null) return NotFound();
-
-            return Ok(trainer);
+            return Ok(heroCurrentPower);
         }
     }
 }

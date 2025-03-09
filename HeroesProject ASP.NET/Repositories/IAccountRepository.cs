@@ -5,9 +5,8 @@ namespace HeroesProject_ASP.NET.Repositories
 {
     public interface IAccountRepository
     {
-        Task<IdentityResult> SignUp(SignupModel signupModel);
+        Task<string> SignUp(SignupModel signupModel);
         Task<string> Login(LoginModel loginModel);
-        Task<AppUser> UpdateUser(AppUser updatedUser);
         Task<int> DeleteUser(Guid id);
     }
 }

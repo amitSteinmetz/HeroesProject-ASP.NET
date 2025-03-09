@@ -17,14 +17,14 @@ namespace HeroesProject_ASP.NET.Controllers
             _accountRepository = accountRepository;
         }
 
-        [HttpPost("")]
+        [HttpPost("signup")]
         public async Task<IActionResult> Signup([FromBody] SignupModel signupModel)
         {
             var result = await _accountRepository.SignUp(signupModel);
 
-            if (result.Succeeded) return Ok(result.Succeeded);
-            
-            return BadRequest();
+            if (string.IsNullOrWhiteSpace(result)) return Unauthorized();
+
+            return Ok(result);
         }
 
         [HttpPost("login")]
@@ -33,16 +33,6 @@ namespace HeroesProject_ASP.NET.Controllers
             string result = await _accountRepository.Login(loginModel);
 
             if (string.IsNullOrWhiteSpace(result)) return Unauthorized();
-
-            return Ok(result);
-        }
-
-        [HttpPut("")]
-        public async Task<IActionResult> UpdateUser([FromBody] AppUser updatedUser)
-        {
-            var result = await _accountRepository.UpdateUser(updatedUser);
-
-            if (result == null) return BadRequest();
 
             return Ok(result);
         }
@@ -56,6 +46,5 @@ namespace HeroesProject_ASP.NET.Controllers
 
             return Ok();
         }
-
     }
 }

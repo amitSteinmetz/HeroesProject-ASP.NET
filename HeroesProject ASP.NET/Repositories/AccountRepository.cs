@@ -9,12 +9,11 @@ namespace HeroesProject_ASP.NET.Repositories
     public class AccountRepository : IAccountRepository
     {
         private readonly HeroesContext _context;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<TrainerModel> _userManager;
+        private readonly SignInManager<TrainerModel> _signInManager;
         private readonly IConfiguration _configuration;
 
-
-        public AccountRepository(HeroesContext context , UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration)
+        public AccountRepository(HeroesContext context , UserManager<TrainerModel> userManager, SignInManager<TrainerModel> signInManager, IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
@@ -22,31 +21,19 @@ namespace HeroesProject_ASP.NET.Repositories
             _configuration = configuration;
         }
 
-        public async Task<IdentityResult> SignUp(SignupModel signupModel)
+        public async Task<string> SignUp(SignupModel signupModel)
         {
-            AppUser user = new()
+            TrainerModel trainer = new()
             {
-                FirstName = signupModel.FirstName,
-                LastName = signupModel.LastName,
+                Name = signupModel.Name,
                 Email = signupModel.Email,
                 UserName = signupModel.Email
             };
 
-            var result = await _userManager.CreateAsync(user, signupModel.Password);
+            var result = await _userManager.CreateAsync(trainer, signupModel.Password);
 
-            if (result.Succeeded)
-            {
-                var trainer = new TrainerModel
-                {
-                    Name = signupModel.FirstName + " " + signupModel.LastName,
-                    User = user
-                };
-
-                await _context.Trainers.AddAsync(trainer);
-                await _context.SaveChangesAsync();
-            }
-
-            return result;
+            if (result.Succeeded) return trainer.Id;
+            return null;
         }
 
         public async Task<string> Login(LoginModel loginModel)
@@ -55,27 +42,9 @@ namespace HeroesProject_ASP.NET.Repositories
                 false, false);
             if (!result.Succeeded) return null;
 
-            string token = TokenUtilities.CreateToken(_configuration, loginModel.Email);
-            return token;
-        }
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
 
-        public async Task<AppUser> UpdateUser(AppUser updatedUser)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == updatedUser.Id);
-
-            if (user != null)
-            {
-                user.FirstName = updatedUser.FirstName;
-                user.LastName = updatedUser.LastName;
-                user.UserName = updatedUser.UserName;
-
-                var trainer = await _context.Trainers.FindAsync(updatedUser.Id);
-                if (trainer != null) trainer.Name = user.FirstName + " " + user.LastName;
-
-                await _context.SaveChangesAsync();
-            }
-
-            return user;
+            return TokenUtilities.CreateToken(_configuration, user);
         }
 
         public async Task<int> DeleteUser(Guid id)
@@ -84,23 +53,16 @@ namespace HeroesProject_ASP.NET.Repositories
 
             if (user != null)
             {
-                var trainer = await _context.Trainers.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.User.Id == id.ToString());
-                if (trainer != null)
+                if (user.Heroes != null)
                 {
-                    if (trainer.Heroes != null)
+                    foreach (var hero in user.Heroes)
                     {
-                        foreach (var hero in trainer.Heroes)
-                        {
-                            hero.StartTrainingDate = null;
-                        }
-    
-                        trainer.Heroes.Clear();
+                        hero.StartTrainingDate = null;
                     }
-                    _context.Trainers.Remove(trainer);
+                    user.Heroes.Clear();
                 }
-                
-                _context.Users.Remove(user);
 
+                _context.Users.Remove(user);
                 return await _context.SaveChangesAsync();
             }
 

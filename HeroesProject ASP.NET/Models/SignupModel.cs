@@ -5,10 +5,7 @@ namespace HeroesProject_ASP.NET.Models
     public class SignupModel
     {
         [Required]
-        public string FirstName { get; set; }
-         
-        [Required]
-        public string LastName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [EmailAddress]

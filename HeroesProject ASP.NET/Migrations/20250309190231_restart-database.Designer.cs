@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HeroesProject_ASP.NET.Migrations
 {
     [DbContext(typeof(HeroesContext))]
-    [Migration("20250307071500_NewHeroModelAdded")]
-    partial class NewHeroModelAdded
+    [Migration("20250309190231_restart-database")]
+    partial class restartdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,51 @@ namespace HeroesProject_ASP.NET.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HeroesProject_ASP.NET.Models.AppUser", b =>
+            modelBuilder.Entity("HeroesProject_ASP.NET.Models.HeroModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Ability")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("CurrentPower")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("DailyTrainingCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastTrainingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartTrainingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("StartingPower")
+                        .HasColumnType("float");
+
+                    b.PrimitiveCollection<string>("SuitColors")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("Heroes");
+                });
+
+            modelBuilder.Entity("HeroesProject_ASP.NET.Models.TrainerModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -44,19 +88,15 @@ namespace HeroesProject_ASP.NET.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -96,67 +136,6 @@ namespace HeroesProject_ASP.NET.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("HeroesProject_ASP.NET.Models.HeroModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Ability")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("CurrentPower")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StartTrainingDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("StartingPower")
-                        .HasColumnType("float");
-
-                    b.PrimitiveCollection<string>("SuitColors")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TrainerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TrainerId");
-
-                    b.ToTable("Heroes");
-                });
-
-            modelBuilder.Entity("HeroesProject_ASP.NET.Models.TrainerModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Trainers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -301,15 +280,6 @@ namespace HeroesProject_ASP.NET.Migrations
                     b.Navigation("Trainer");
                 });
 
-            modelBuilder.Entity("HeroesProject_ASP.NET.Models.TrainerModel", b =>
-                {
-                    b.HasOne("HeroesProject_ASP.NET.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -321,7 +291,7 @@ namespace HeroesProject_ASP.NET.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("HeroesProject_ASP.NET.Models.AppUser", null)
+                    b.HasOne("HeroesProject_ASP.NET.Models.TrainerModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -330,7 +300,7 @@ namespace HeroesProject_ASP.NET.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("HeroesProject_ASP.NET.Models.AppUser", null)
+                    b.HasOne("HeroesProject_ASP.NET.Models.TrainerModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,7 +315,7 @@ namespace HeroesProject_ASP.NET.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HeroesProject_ASP.NET.Models.AppUser", null)
+                    b.HasOne("HeroesProject_ASP.NET.Models.TrainerModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -354,7 +324,7 @@ namespace HeroesProject_ASP.NET.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("HeroesProject_ASP.NET.Models.AppUser", null)
+                    b.HasOne("HeroesProject_ASP.NET.Models.TrainerModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
