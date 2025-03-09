@@ -31,7 +31,7 @@ namespace HeroesProject_ASP.NET
             }).AddJwtBearer(opt =>
             {
                 opt.SaveToken = true;
-                opt.RequireHttpsMetadata = true;
+                opt.RequireHttpsMetadata = false;
                 opt.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = true,
@@ -71,8 +71,8 @@ namespace HeroesProject_ASP.NET
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
 
             app.Run();

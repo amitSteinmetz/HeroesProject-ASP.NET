@@ -12,7 +12,6 @@ namespace HeroesProject_ASP.NET.Repositories
         {
             _context = context;
         }
-
         public async Task<List<HeroModel>> GetTrainerHeroes(int trainerId)
         {
             var trainer = await _context.Trainers.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.Id == trainerId);

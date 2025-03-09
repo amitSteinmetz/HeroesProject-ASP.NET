@@ -1,10 +1,13 @@
 ﻿using HeroesProject_ASP.NET.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HeroesProject_ASP.NET.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class TrainersController : ControllerBase
     {
         private readonly ITrainersRepository _trainersRepository;

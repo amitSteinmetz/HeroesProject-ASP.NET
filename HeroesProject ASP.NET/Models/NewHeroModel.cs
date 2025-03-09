@@ -16,6 +16,6 @@ namespace HeroesProject_ASP.NET.Models
         [Required(ErrorMessage = "Please add hero starting power")]
         public double StartingPower { get; set; }
 
-        public int TrainerId { get; set; }
+        public int? TrainerId { get; set; }
     }
 }

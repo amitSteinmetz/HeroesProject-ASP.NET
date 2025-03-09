@@ -107,9 +107,13 @@ namespace HeroesProject_ASP.NET.Repositories
 
             if (user != null)
             {
-                var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.User.Id == id.ToString());
-                if (trainer != null) _context.Trainers.Remove(trainer);
-
+                var trainer = await _context.Trainers.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.User.Id == id.ToString());
+                if (trainer != null)
+                {
+                    if (trainer.Heroes != null) trainer.Heroes.Clear();
+                    _context.Trainers.Remove(trainer);
+                }
+                
                 _context.Users.Remove(user);
 
                 return await _context.SaveChangesAsync();

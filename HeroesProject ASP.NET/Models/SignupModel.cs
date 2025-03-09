@@ -15,6 +15,10 @@ namespace HeroesProject_ASP.NET.Models
         public string Email { get; set; }
 
         [Required]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$",
+            ErrorMessage = 
+            "Password must be at least 8 characters long, include at least one uppercase letter," +
+            " one lowercase letter, one number, and one special character.")]
         [Compare("ConfirmPassword")]
         public string Password { get; set; }
 
@@ -22,3 +26,4 @@ namespace HeroesProject_ASP.NET.Models
         public string ConfirmPassword { get; set; }
     }
 }
+
