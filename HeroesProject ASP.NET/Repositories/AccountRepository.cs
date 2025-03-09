@@ -1,11 +1,8 @@
 ﻿using HeroesProject_ASP.NET.Data;
+using HeroesProject_ASP.NET.Helpers;
 using HeroesProject_ASP.NET.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace HeroesProject_ASP.NET.Repositories
 {
@@ -15,6 +12,7 @@ namespace HeroesProject_ASP.NET.Repositories
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
+
 
         public AccountRepository(HeroesContext context , UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration)
         {
@@ -57,29 +55,8 @@ namespace HeroesProject_ASP.NET.Repositories
                 false, false);
             if (!result.Succeeded) return null;
 
-            string token = CreateToken(loginModel.Email);
+            string token = TokenUtilities.CreateToken(_configuration, loginModel.Email);
             return token;
-        }
-
-        private string CreateToken(string email)
-        {
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var authSigninKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256Signature)
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public async Task<AppUser> UpdateUser(AppUser updatedUser)
