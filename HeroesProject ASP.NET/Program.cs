@@ -14,15 +14,22 @@ namespace HeroesProject_ASP.NET
     {
         public static void Main(string[] args)
         {
+            // Creating the web application - that wiil manage services configuration and sets-up middlewears
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container //
+
+            // Database connection
             builder.Services.AddDbContext<HeroesContext>(
                 options => options.UseSqlServer(
                     builder.Configuration.GetConnectionString("WorkshopRealApiPublic")));
+
+            // Identity connection - for authentication
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<HeroesContext>()
                 .AddDefaultTokenProviders();
+
+            // Configure JWT authentication settings
             builder.Services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,38 +49,48 @@ namespace HeroesProject_ASP.NET
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
+
+            // JSON Serialization Settings - prevent infinite loops
             builder.Services.AddControllers().AddNewtonsoftJson(opt =>
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            // Registering Repositories (Dependency Injection) - defining services scopes
             builder.Services.AddTransient<IAccountRepository, AccountRepository>();
             builder.Services.AddTransient<IHeroesRepository, HeroesRepository>();
             builder.Services.AddTransient<ITrainersRepository, TrainersRepository>();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Swagger settings 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            
+            // CORS settings - about how can outside sources can access and call to this API web server
             builder.Services.AddCors(option =>
             {
                 option.AddDefaultPolicy(builder =>
                 {
                     builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
-            });
-
+            }); // When connecting to the client-side, restrict the access: builder.WithOrigins("https://yourfrontend.com").AllowAnyHeader().AllowAnyMethod();
+            
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline //
+
+            // Enable swagger
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); // Redirecting all requests to secure connection
 
-            app.UseRouting();
-            app.UseAuthentication();
+            app.UseRouting(); // Enables endpoint routing
+            app.UseAuthentication(); // Activates JWT authentication
             app.UseAuthorization();
-            app.MapControllers();
+
+            app.MapControllers(); // Connect (map) between controller action method to corresponding route and request type
 
             app.Run();
         }
