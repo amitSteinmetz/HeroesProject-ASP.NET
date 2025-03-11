@@ -28,7 +28,7 @@ namespace HeroesProject_ASP.NET.Helpers
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256Signature)
                 );
-
+            
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

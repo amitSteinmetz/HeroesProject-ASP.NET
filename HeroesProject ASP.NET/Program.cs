@@ -49,14 +49,15 @@ namespace HeroesProject_ASP.NET
                 };
             });
 
-            // Possible way to add password validations
-            //builder.Services.Configure<IdentityOptions>(opt =>
-            //{
-            //    opt.Password.RequireUppercase = true;
-            //    opt.Password.RequireDigit = true;
-            //    opt.Password.RequireNonAlphanumeric = true;
-            //    opt.Password.RequiredLength = 8;
-            //});
+            /* Possible way to add password validations
+                builder.Services.Configure<IdentityOptions>(opt =>
+                {
+                    opt.Password.RequireUppercase = true;
+                    opt.Password.RequireDigit = true;
+                    opt.Password.RequireNonAlphanumeric = true;
+                    opt.Password.RequiredLength = 8;
+                });
+            */
 
             // JSON Serialization Settings - prevent infinite loops
             builder.Services.AddControllers().AddNewtonsoftJson(opt =>
@@ -71,19 +72,20 @@ namespace HeroesProject_ASP.NET
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            
+
             // CORS settings - about how can outside sources can access and call to this API web server
-            builder.Services.AddCors(option =>
+            builder.Services.AddCors(options =>
             {
-                option.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-            }); // When connecting to the client-side, restrict the access: builder.WithOrigins("https://yourfrontend.com").AllowAnyHeader().AllowAnyMethod();
-            
+                options.AddPolicy("AllowAngularApp",
+                    policy => policy.WithOrigins("http://localhost:4200")
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline //
+
 
             // Enable swagger
             if (app.Environment.IsDevelopment())
@@ -95,6 +97,7 @@ namespace HeroesProject_ASP.NET
             app.UseHttpsRedirection(); // Redirecting all requests to secure connection
 
             app.UseRouting(); // Enables endpoint routing
+            app.UseCors("AllowAngularApp");
             app.UseAuthentication(); // Activates JWT authentication
             app.UseAuthorization();
 

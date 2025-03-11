@@ -1,8 +1,10 @@
-﻿using HeroesProject_ASP.NET.Models;
+﻿using HeroesProject_ASP.NET.DTOs;
+using HeroesProject_ASP.NET.Models;
 using HeroesProject_ASP.NET.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HeroesProject_ASP.NET.Controllers
 {
@@ -20,21 +22,26 @@ namespace HeroesProject_ASP.NET.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> Signup([FromBody] SignupModel signupModel)
         {
-            var result = await _accountRepository.SignUp(signupModel);
+            var user = await _accountRepository.SignUp(signupModel);
 
-            if (string.IsNullOrWhiteSpace(result)) return Unauthorized();
+            if (user == null) return Unauthorized();
 
-            return Ok(result);
+            var userDTO = new TrainerDTO
+            {
+                UserName = user.UserName
+            };
+
+            return Ok(userDTO);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
-            string result = await _accountRepository.Login(loginModel);
+            var loggedUserRes = await _accountRepository.Login(loginModel);
 
-            if (string.IsNullOrWhiteSpace(result)) return Unauthorized();
+            if (loggedUserRes == null) return Unauthorized();
 
-            return Ok(result);
+            return Ok(loggedUserRes);
         }
 
         [HttpDelete("{id}")]

@@ -1,8 +1,10 @@
 ﻿using HeroesProject_ASP.NET.Data;
+using HeroesProject_ASP.NET.DTOs;
 using HeroesProject_ASP.NET.Helpers;
 using HeroesProject_ASP.NET.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HeroesProject_ASP.NET.Repositories
 {
@@ -21,7 +23,7 @@ namespace HeroesProject_ASP.NET.Repositories
             _configuration = configuration;
         }
 
-        public async Task<string> SignUp(SignupModel signupModel)
+        public async Task<TrainerModel> SignUp(SignupModel signupModel)
         {
             TrainerModel trainer = new()
             {
@@ -32,19 +34,22 @@ namespace HeroesProject_ASP.NET.Repositories
 
             var result = await _userManager.CreateAsync(trainer, signupModel.Password);
 
-            if (result.Succeeded) return trainer.Id;
+            if (result.Succeeded) return trainer;
             return null;
         }
 
-        public async Task<string> Login(LoginModel loginModel)
+        public async Task<LoggedUserDTO> Login(LoginModel loginModel)
         {
             var result = await _signInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password,
                 false, false);
             if (!result.Succeeded) return null;
 
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
+            var token = TokenUtilities.CreateToken(_configuration, user);
+            var jwtToken = new JwtSecurityTokenHandler().ReadToken(token);
+            var expireTime = jwtToken.ValidTo.Date.ToString();
 
-            return TokenUtilities.CreateToken(_configuration, user);
+            return new LoggedUserDTO { Name = user.Name, Token = token, TokenExpireTime = expireTime };
         }
 
         public async Task<int> DeleteUser(Guid id)
