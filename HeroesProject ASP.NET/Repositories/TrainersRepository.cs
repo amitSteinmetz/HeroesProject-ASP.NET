@@ -69,9 +69,9 @@ namespace HeroesProject_ASP.NET.Repositories
                 if (trainer.Heroes != null && trainer.Heroes.Contains(hero))
                 {
                     if (!hero.LastTrainingDate.HasValue || (hero.LastTrainingDate.HasValue && hero.LastTrainingDate.Value < DateTime.Today))
-                        TrainHeroUtilities.TrainHeroHandler(hero, false);
+                        HeroUtilities.TrainHeroHandler(hero, false);
                     else if (hero.DailyTrainingCount < 5)
-                        TrainHeroUtilities.TrainHeroHandler(hero, true);
+                        HeroUtilities.TrainHeroHandler(hero, true);
 
                     var changes = await _context.SaveChangesAsync();
 

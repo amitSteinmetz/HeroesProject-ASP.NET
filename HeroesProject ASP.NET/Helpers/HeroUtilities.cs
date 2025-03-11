@@ -1,8 +1,9 @@
-﻿using HeroesProject_ASP.NET.Models;
+﻿using HeroesProject_ASP.NET.DTOs;
+using HeroesProject_ASP.NET.Models;
 
 namespace HeroesProject_ASP.NET.Helpers
 {
-    public class TrainHeroUtilities
+    public class HeroUtilities
     {
         public static void TrainHeroHandler(HeroModel hero, bool sameDay)
         {
@@ -20,6 +21,19 @@ namespace HeroesProject_ASP.NET.Helpers
 
             double updatedPower = (double)currentPower * rand / 100;
             return Math.Round(updatedPower, 2);
+        }
+
+        public static HeroDTO constructHeroDTO(HeroModel hero)
+        {
+            return new HeroDTO
+            {
+                Name = hero.Name,
+                Ability = hero.Ability.ToString(),
+                SuitColors = hero.SuitColors,
+                StartingPower = hero.StartingPower,
+                CurrentPower = hero.CurrentPower,
+                ImgPath = hero.ImgPath
+            };
         }
     }
 }

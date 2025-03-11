@@ -42,7 +42,8 @@ namespace HeroesProject_ASP.NET.Repositories
                 Ability = newHero.Ability,
                 SuitColors = newHero.SuitColors,
                 StartingPower = newHero.StartingPower,
-                CurrentPower = newHero.StartingPower
+                CurrentPower = newHero.StartingPower,
+                ImgPath = newHero.ImgPath
             };
 
             _context.Heroes.Add(hero);

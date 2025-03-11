@@ -1,4 +1,6 @@
 ﻿using HeroesProject_ASP.NET.Data;
+using HeroesProject_ASP.NET.DTOs;
+using HeroesProject_ASP.NET.Helpers;
 using HeroesProject_ASP.NET.Models;
 using HeroesProject_ASP.NET.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +27,13 @@ namespace HeroesProject_ASP.NET.Controllers
             var heroes = await _heroesRepository.GetAllHeroes();
             if (heroes == null) return NotFound();
 
-            return Ok(heroes);
+            List<HeroDTO> heroesDTO = new();
+            foreach (var hero in heroes)
+            {
+                heroesDTO.Add(HeroUtilities.constructHeroDTO(hero));
+            }
+
+            return Ok(heroesDTO);
         }
 
         [HttpGet("{id}")]
@@ -45,7 +53,13 @@ namespace HeroesProject_ASP.NET.Controllers
 
             if (availableHeroes.Count == 0) return NotFound();
 
-            return Ok(availableHeroes);
+            List<HeroDTO> availableHeroesDTO = new();
+            foreach (var hero in availableHeroes)
+            {
+                availableHeroesDTO.Add(HeroUtilities.constructHeroDTO(hero));
+            }
+
+            return Ok(availableHeroesDTO);
         }
 
         [HttpPost("")]
