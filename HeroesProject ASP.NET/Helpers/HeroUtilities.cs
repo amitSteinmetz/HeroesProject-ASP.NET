@@ -27,6 +27,7 @@ namespace HeroesProject_ASP.NET.Helpers
         {
             return new HeroDTO
             {
+                Id = hero.Id,
                 Name = hero.Name,
                 Ability = hero.Ability.ToString(),
                 SuitColors = hero.SuitColors,

@@ -5,6 +5,7 @@ namespace HeroesProject_ASP.NET.DTOs
 {
     public class HeroDTO
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Ability { get; set; }
         public string[] SuitColors { get; set; }
