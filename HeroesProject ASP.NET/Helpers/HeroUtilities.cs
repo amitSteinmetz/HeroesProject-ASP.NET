@@ -5,14 +5,12 @@ namespace HeroesProject_ASP.NET.Helpers
 {
     public class HeroUtilities
     {
-        public static double? TrainHeroHandler(HeroModel hero)
+        public static void TrainHeroHandler(HeroModel hero)
         {
             hero.CurrentPower = TrainHeroResult(hero.CurrentPower);
             bool sameDay = (hero.LastTrainingDate != null) && (hero.LastTrainingDate.Value == DateTime.Today);
             hero.DailyTrainingCount = sameDay ? hero.DailyTrainingCount + 1 : 1;
             hero.LastTrainingDate = DateTime.Today;
-
-            return hero.CurrentPower;
         }
 
         private static double? TrainHeroResult(double? currentPower)

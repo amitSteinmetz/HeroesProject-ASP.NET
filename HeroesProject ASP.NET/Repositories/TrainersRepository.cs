@@ -44,7 +44,8 @@ namespace HeroesProject_ASP.NET.Repositories
             var trainer = await _context.Users.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.Email == userName);
             var hero = await _context.Heroes.Include(h => h.Trainer).FirstOrDefaultAsync(h => h.Id == heroId);
 
-            if (trainer == null || hero == null || trainer.Heroes == null || !trainer.Heroes.Contains(hero))
+            if (trainer == null ||
+                hero == null || trainer.Heroes == null || !trainer.Heroes.Contains(hero))
             {
                 return -1;
             }
@@ -69,9 +70,9 @@ namespace HeroesProject_ASP.NET.Repositories
                 return null;
             }
 
-            var heroUpdatedPower = HeroUtilities.TrainHeroHandler(hero);
+            HeroUtilities.TrainHeroHandler(hero);
             await _context.SaveChangesAsync();
-            return heroUpdatedPower;
+            return hero.CurrentPower;
         }
     }
 }
