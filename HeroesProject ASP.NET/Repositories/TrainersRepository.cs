@@ -30,9 +30,9 @@ namespace HeroesProject_ASP.NET.Repositories
 
                 hero.StartTrainingDate = DateTime.Today;
 
-                if (trainer.Heroes == null) trainer.Heroes = new List<HeroModel>() { hero }; // first hero - create new list
-                else trainer.Heroes.Add(hero);
-
+                trainer.Heroes = trainer.Heroes ?? new List<HeroModel>(){};
+                trainer.Heroes.Add(hero);
+        
                 return await _context.SaveChangesAsync();
             }
 
@@ -44,20 +44,15 @@ namespace HeroesProject_ASP.NET.Repositories
             var trainer = await _context.Users.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.Email == userName);
             var hero = await _context.Heroes.Include(h => h.Trainer).FirstOrDefaultAsync(h => h.Id == heroId);
 
-            if (trainer != null && hero != null)
-                if (trainer.Heroes != null && trainer.Heroes.Contains(hero))
-                {
-                    hero.StartTrainingDate = null;
-                    hero.LastTrainingDate = null;
-                    hero.DailyTrainingCount = null;
-                    hero.CurrentPower = hero.StartingPower;
+            if (trainer == null || hero == null || trainer.Heroes == null || !trainer.Heroes.Contains(hero))
+            {
+                return -1;
+            }
 
-                    trainer.Heroes.Remove(hero);
+            HeroUtilities.resetHero(hero);
+            trainer.Heroes.Remove(hero);
 
-                    return await _context.SaveChangesAsync();
-                }
-
-            return -1;
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<double?> TrainHero(string userName, int heroId)
@@ -65,20 +60,18 @@ namespace HeroesProject_ASP.NET.Repositories
             var trainer = await _context.Users.Include(t => t.Heroes).FirstOrDefaultAsync(t => t.Email == userName);
             var hero = await _context.Heroes.Include(h => h.Trainer).FirstOrDefaultAsync(h => h.Id == heroId);
 
-            if (trainer != null && hero != null)
-                if (trainer.Heroes != null && trainer.Heroes.Contains(hero))
-                {
-                    if (!hero.LastTrainingDate.HasValue || (hero.LastTrainingDate.HasValue && hero.LastTrainingDate.Value < DateTime.Today))
-                        HeroUtilities.TrainHeroHandler(hero, false);
-                    else if (hero.DailyTrainingCount < 5)
-                        HeroUtilities.TrainHeroHandler(hero, true);
+            if (trainer == null
+                || hero == null
+                || trainer.Heroes == null
+                || !trainer.Heroes.Contains(hero)
+                || hero.DailyTrainingCount >= 5)
+            {
+                return null;
+            }
 
-                    var changes = await _context.SaveChangesAsync();
-
-                    return (changes != 0) ? hero.CurrentPower : null; // if no changes - hero was traind 5 times today, that should lead to bad request
-                }
-
-            return null;
+            var heroUpdatedPower = HeroUtilities.TrainHeroHandler(hero);
+            await _context.SaveChangesAsync();
+            return heroUpdatedPower;
         }
     }
 }

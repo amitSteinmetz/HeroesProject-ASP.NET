@@ -43,6 +43,7 @@ namespace HeroesProject_ASP.NET.Repositories
                 SuitColors = newHero.SuitColors,
                 StartingPower = newHero.StartingPower,
                 CurrentPower = newHero.StartingPower,
+                DailyTrainingCount = 0,
                 ImgPath = newHero.ImgPath
             };
 

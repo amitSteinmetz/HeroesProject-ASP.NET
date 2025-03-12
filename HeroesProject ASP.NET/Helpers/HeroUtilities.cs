@@ -5,11 +5,14 @@ namespace HeroesProject_ASP.NET.Helpers
 {
     public class HeroUtilities
     {
-        public static void TrainHeroHandler(HeroModel hero, bool sameDay)
+        public static double? TrainHeroHandler(HeroModel hero)
         {
             hero.CurrentPower = TrainHeroResult(hero.CurrentPower);
-            hero.LastTrainingDate = DateTime.Today;
+            bool sameDay = (hero.LastTrainingDate != null) && (hero.LastTrainingDate.Value == DateTime.Today);
             hero.DailyTrainingCount = sameDay ? hero.DailyTrainingCount + 1 : 1;
+            hero.LastTrainingDate = DateTime.Today;
+
+            return hero.CurrentPower;
         }
 
         private static double? TrainHeroResult(double? currentPower)
@@ -35,6 +38,14 @@ namespace HeroesProject_ASP.NET.Helpers
                 CurrentPower = hero.CurrentPower,
                 ImgPath = hero.ImgPath
             };
+        }
+
+        public static void resetHero(HeroModel hero)
+        {
+            hero.StartTrainingDate = null;
+            hero.LastTrainingDate = null;
+            hero.DailyTrainingCount = 0;
+            hero.CurrentPower = hero.StartingPower;
         }
     }
 }
