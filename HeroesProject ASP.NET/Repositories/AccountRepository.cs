@@ -47,7 +47,7 @@ namespace HeroesProject_ASP.NET.Repositories
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
             var token = TokenUtilities.CreateToken(_configuration, user);
             var jwtToken = new JwtSecurityTokenHandler().ReadToken(token);
-            var expireTime = jwtToken.ValidTo.Date.ToString();
+            var expireTime = jwtToken.ValidTo.ToString("o");
 
             return new LoggedUserDTO { Name = user.Name, Token = token, TokenExpireTime = expireTime };
         }

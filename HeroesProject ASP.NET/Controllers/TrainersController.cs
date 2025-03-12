@@ -1,4 +1,6 @@
-﻿using HeroesProject_ASP.NET.Repositories;
+﻿using HeroesProject_ASP.NET.DTOs;
+using HeroesProject_ASP.NET.Helpers;
+using HeroesProject_ASP.NET.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +42,13 @@ namespace HeroesProject_ASP.NET.Controllers
 
             if (trainerHeroes == null) return NotFound();
 
-            return Ok(trainerHeroes);
+            List<HeroDTO> trainerHeroesDTO = new();
+            foreach (var hero in trainerHeroes)
+            {
+                trainerHeroesDTO.Add(HeroUtilities.constructHeroDTO(hero));
+            }
+
+            return Ok(trainerHeroesDTO);
         }
 
         [HttpDelete("{heroId}")]
